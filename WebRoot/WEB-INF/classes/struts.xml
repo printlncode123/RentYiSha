@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- <constant name="struts.enable.DynamicMethodInvocation" value="true" 
+		/> --><!--该属性设置Struts 2是否支持动态方法调用 -->
+	<constant name="struts.devMode" value="true" /><!-- 开启使用开发模式，详细错误提示 -->
+	<constant name="struts.action.extension" value="do,action" /><!-- 
+		设置url请求后缀 -->
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<package name="default" namespace="/" extends="struts-default">
+		<global-results>
+			<result name="error">/html/error.html</result>
+		</global-results>
+		<!-- <action name="add" class="com.action.AdminAction"> <result>/WEB-INF/jsp/after-index.jsp</result> 
+			</action> -->
+
+		<action name="userModel" class="com.action.UserAction">
+			<result name="login">/html/login.html</result>
+			<result name="input">/jsp/enter/registBefore.jsp</result>
+			<result name="index" type="chain">goodModel</result>
+			<!-- <result name="adminIndex">/admin/index.jsp</result> -->
+			<result name="ok" type="chain">updateInfo</result>
+			<result name="exit" type="chain">goodModel</result>
+		</action>
+		<action name="adminModel" class="com.action.UserAction">
+		    <result name="indexac">/admin/index.jsp</result> 
+		    <result name="login">/admin/login.html</result>
+		    <result name="users">/admin/users.jsp</result>
+		</action>
+		<!-- <action name="admin" class="com.action.UserAction" method="findAfter">
+		    <result name="indexafter">/admin/index.jsp</result> 
+		</action> -->
+		<action name="adminnew" class="com.action.AdminAction">
+		    <result name="newQuery" type="chain">adminnewModel</result> 
+		    <result name="allcata">/admin/good/addGood.jsp</result> 
+		    <result name="carts">/admin/cart/queryCarts.jsp</result>
+		</action>
+		<action name="adminnewModel" class="com.action.AdminAction" method="findGood">
+		    <result name="good">/admin/good.jsp</result> 
+		</action>
+		<action name="updateInfo" class="com.action.UserAction" method="updateInfo">
+			<result name="upsuccess" type="chain">finduinfo</result>
+		</action>
+		<action name="finduinfo" class="com.action.UserAction" method="findUserInfo">
+			<result name="MyInfo">/jsp/person/myInfo.jsp</result>
+		</action>
+		<action name="yanzheng" class="com.action.CheckImgAction"></action>
+		<action name="catagory" class="com.action.CatagoryAction">
+			<!-- <result name="addSuccess">/admin/catagory/add.jsp</result> <result 
+				name="querySuccess">/admin/catagory/add.jsp</result> -->
+			<result name="querySuccess">/jsp/allCatagory.jsp</result>
+			<result name="findByCid">/jsp/allCatagory.jsp</result>
+		</action>
+
+		<action name="goodModel" class="com.action.GoodAction" method="findAll">
+			<result name="index">/jsp/index.jsp</result>
+		</action>
+		<action name="good" class="com.action.GoodAction">
+			<result name="goodDetail">/jsp/detail.jsp</result>
+			<result name="findByKey">/jsp/sousuo.jsp</result>
+			<result name="findnew">/jsp/xinpin.jsp</result>
+		</action>
+
+		<action name="cartModel" class="com.action.CartAction">
+			<result name="success" type="chain">carts</result>
+			<result name="deleteSuccess" type="chain">carts</result>
+			<result name="order">/jsp/order.jsp</result>
+			<result name="login">/html/login.html</result>
+		</action>
+
+		<action name="carts" class="com.action.CartAction" method="findcarts">
+			<result name="findcarts">/jsp/cart.jsp</result>
+			<result name="login">/html/login.html</result>
+		</action>
+
+		<action name="orderModel" class="com.action.OrderAction">
+			<result name="orderGenerate">/jsp/orderGenerate.jsp</result>
+		    <result name="deleteod" type="chain">order</result>
+		    <result name="querylimit">/jsp/rezu.jsp</result>
+		</action>
+		<action name="order" class="com.action.OrderAction" method="findorders">
+		   <result name="findorders">/jsp/personOrder.jsp</result>
+		   <result name="login">/html/login.html</result>
+		</action>
+	</package>
+
+
+</struts>

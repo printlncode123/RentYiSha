@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+       >
+       <!-- 启动注解配置，则注解有效 -->
+       <context:annotation-config/>
+       <!-- 对所有标识@component注解的类 自动创建实例（spring ioc容器创建）-->
+       <context:component-scan base-package="com"/>
+       
+       <!--引入jdbc.properties文件里面封装了连接对象需要的数据  -->
+       <context:property-placeholder location="classpath:jdbc.properties"/>
+       <!--spring支持连接池(dbcp) 通过反射机制创建连接池对象 -->
+       <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+         <property name="driverClassName" value="${driver}"/>
+         <property name="url" value="${url}"/>
+         <property name="username" value="${user}"/>
+         <property name="password" value="${pass}"/>
+       </bean>
+       <!--用来管理datasource数据源的，因为spring对hibernate的支持 这里将hibernate自带的连接池换成spring里的连接池 -->
+       <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+         <property name="dataSource" ref="dataSource"/><!-- 注入dataSource,用来从连接池获取连接对象 -->
+         <property name="hibernateProperties"><!-- hibernate属性 -->
+           <props>
+            <!-- 数据库方言，表示使用的是什么数据库服务器 -->
+            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            <prop key="hibernate.format_sql">true</prop>
+            <prop key="hibernate.show_sql">true</prop>
+            <!-- <prop key="hibernate.hbm2ddl.auto">create</prop> -->
+           </props>
+         </property>
+         <property name="packagesToScan"><!-- 映射实体类建立表 -->
+            <list>
+             <value>com.entity</value>
+            </list>
+         </property>
+       </bean>
+       <!-- 事务管理器对象,只有提交事务了对数据的操作修改才被保存到数据库(开启事务，操作，提交事务，需要连接对象所以要注入sessionFactory对象) -->
+       <bean id="tx" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory" ref="sessionFactory"/>
+       </bean>
+       <!-- 启动 事务注解 ，告诉 service,要在方法前切入事务（使用代理机制） -->
+       <tx:annotation-driven transaction-manager="tx"/>
+</beans>
